@@ -1,13 +1,31 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useEffect } from "react";
+import HeroSection from "@/components/HeroSection";
+import CoreModules from "@/components/CoreModules";
+import PhilosophySection from "@/components/PhilosophySection";
+import ImpactVision from "@/components/ImpactVision";
+import Footer from "@/components/Footer";
 
 const Index = () => {
+  useEffect(() => {
+    document.title = "Atlas Sanctum - Where Love Meets Legacy";
+    
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        "content",
+        "Transform your family into a living sanctum where purpose, financial wisdom, and collective intelligence thrive together. Join the wisdom-driven family network."
+      );
+    }
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <main className="min-h-screen">
+      <HeroSection />
+      <CoreModules />
+      <PhilosophySection />
+      <ImpactVision />
+      <Footer />
+    </main>
   );
 };
 
