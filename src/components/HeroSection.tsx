@@ -42,7 +42,7 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-            <Button variant="legacy" size="xl" className="group" onClick={() => window.location.href = '/auth'}>
+            <Button variant="legacy" size="xl" className="group" onClick={() => window.location.href = '/pricing'}>
               Begin Your Journey
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
