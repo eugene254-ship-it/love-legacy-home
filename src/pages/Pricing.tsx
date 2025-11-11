@@ -1,16 +1,61 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Compass, ArrowLeft } from "lucide-react";
+import { Check, Compass, ArrowLeft, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+
+// Stripe product mapping
+const STRIPE_TIERS = {
+  legacy: {
+    product_id: "prod_TP5DmzRuX7uVdJ",
+    price_id: "price_1SSH2zP68A80rUwDwmoCBQeu",
+  },
+  sanctuary: {
+    product_id: "prod_TP5DE9IO0QfmHM",
+    price_id: "price_1SSH3FP68A80rUwDwyhsXmc0",
+  },
+};
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const { session, subscriptionStatus } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = "Pricing - Atlas Sanctum";
   }, []);
+
+  const handleSubscribe = async (priceId: string, planName: string) => {
+    if (!session) {
+      navigate("/auth");
+      return;
+    }
+
+    setLoadingPlan(planName);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast.error('Failed to start checkout. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   const plans = [
     {
@@ -45,6 +90,8 @@ const Pricing = () => {
       cta: "Begin Journey",
       variant: "legacy" as const,
       popular: true,
+      priceId: STRIPE_TIERS.legacy.price_id,
+      productId: STRIPE_TIERS.legacy.product_id,
     },
     {
       name: "Sanctum Circle",
@@ -63,8 +110,14 @@ const Pricing = () => {
       cta: "Join Circle",
       variant: "sanctuary" as const,
       popular: false,
+      priceId: STRIPE_TIERS.sanctuary.price_id,
+      productId: STRIPE_TIERS.sanctuary.product_id,
     },
   ];
+
+  const isCurrentPlan = (productId?: string) => {
+    return productId && subscriptionStatus.product_id === productId;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -147,9 +200,25 @@ const Pricing = () => {
                     variant={plan.variant}
                     className="w-full"
                     size="lg"
-                    onClick={() => navigate("/auth")}
+                    onClick={() => {
+                      if (plan.name === "Sanctuary Starter") {
+                        navigate("/auth");
+                      } else if (plan.priceId) {
+                        handleSubscribe(plan.priceId, plan.name);
+                      }
+                    }}
+                    disabled={loadingPlan === plan.name || isCurrentPlan(plan.productId)}
                   >
-                    {plan.cta}
+                    {loadingPlan === plan.name ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : isCurrentPlan(plan.productId) ? (
+                      "Current Plan"
+                    ) : (
+                      plan.cta
+                    )}
                   </Button>
                 </CardContent>
               </Card>

@@ -1,13 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Compass, LogOut, Map, Coins, Sparkles, BookOpen } from "lucide-react";
+import { Compass, LogOut, Map, Coins, Sparkles, BookOpen, CreditCard, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+const STRIPE_TIERS = {
+  "prod_TP5DmzRuX7uVdJ": { name: "Legacy Builder", price: "$29/month" },
+  "prod_TP5DE9IO0QfmHM": { name: "Sanctum Circle", price: "$99/month" },
+};
 
 const Dashboard = () => {
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut, loading, session, subscriptionStatus, checkSubscription } = useAuth();
   const navigate = useNavigate();
+  const [loadingPortal, setLoadingPortal] = useState(false);
 
   useEffect(() => {
     document.title = "Dashboard - Atlas Sanctum";
@@ -15,7 +23,40 @@ const Dashboard = () => {
     if (!loading && !user) {
       navigate("/auth");
     }
-  }, [user, loading, navigate]);
+
+    // Check for success parameter
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      toast.success('Subscription activated! Welcome to your journey.');
+      checkSubscription();
+      // Clean up URL
+      window.history.replaceState({}, '', '/dashboard');
+    }
+  }, [user, loading, navigate, checkSubscription]);
+
+  const handleManageSubscription = async () => {
+    if (!session) return;
+
+    setLoadingPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      toast.error('Failed to open subscription management. Please try again.');
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -51,13 +92,53 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Welcome Section */}
-          <div className="space-y-2">
-            <h2 className="text-4xl font-bold">
-              Welcome to Your Sanctum
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Your family's journey to conscious prosperity begins here.
-            </p>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="space-y-2">
+              <h2 className="text-4xl font-bold">
+                Welcome to Your Sanctum
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Your family's journey to conscious prosperity begins here.
+              </p>
+            </div>
+
+            {/* Subscription Status */}
+            {subscriptionStatus.subscribed && subscriptionStatus.product_id && (
+              <Card className="border-secondary/50 shadow-sanctuary">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <CreditCard className="w-4 h-4" />
+                    Current Plan
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <div className="font-bold text-lg">
+                      {STRIPE_TIERS[subscriptionStatus.product_id as keyof typeof STRIPE_TIERS]?.name || "Premium"}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {STRIPE_TIERS[subscriptionStatus.product_id as keyof typeof STRIPE_TIERS]?.price}
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleManageSubscription}
+                    disabled={loadingPortal}
+                    className="w-full"
+                  >
+                    {loadingPortal ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      "Manage Subscription"
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Quick Stats */}
