@@ -3,10 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Compass, ArrowLeft, Loader2 } from "lucide-react";
+import { Check, X, Compass, ArrowLeft, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Stripe product mapping
 const STRIPE_TIERS = {
@@ -223,6 +231,79 @@ const Pricing = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+
+          {/* Feature Comparison Table */}
+          <div className="space-y-6">
+            <h3 className="text-2xl font-bold text-center">Compare All Features</h3>
+            <div className="border border-border/50 rounded-xl overflow-hidden bg-card/50 backdrop-blur-sm">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/50 bg-muted/30">
+                    <TableHead className="w-[280px] text-foreground font-semibold">Feature</TableHead>
+                    <TableHead className="text-center text-foreground font-semibold">Sanctuary Starter</TableHead>
+                    <TableHead className="text-center text-foreground font-semibold bg-secondary/10">Legacy Builder</TableHead>
+                    <TableHead className="text-center text-foreground font-semibold">Sanctum Circle</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[
+                    { feature: "Family Members", starter: "Up to 4", legacy: "Unlimited", sanctuary: "Unlimited" },
+                    { feature: "Family Atlas", starter: "Basic", legacy: "Full + AI Insights", sanctuary: "Full + AI Insights" },
+                    { feature: "Sanctum Ledger", starter: "Essential", legacy: "Advanced", sanctuary: "Advanced" },
+                    { feature: "Mirror Room AI Guidance", starter: false, legacy: true, sanctuary: true },
+                    { feature: "Legacy Engine Storage", starter: "500MB", legacy: "Unlimited", sanctuary: "Unlimited" },
+                    { feature: "Mobile App Access", starter: true, legacy: true, sanctuary: true },
+                    { feature: "Community Access", starter: true, legacy: true, sanctuary: true },
+                    { feature: "Family Wisdom Network", starter: false, legacy: true, sanctuary: true },
+                    { feature: "Priority Support", starter: false, legacy: true, sanctuary: true },
+                    { feature: "Multi-Family Network", starter: false, legacy: false, sanctuary: true },
+                    { feature: "Custom AI Models", starter: false, legacy: false, sanctuary: true },
+                    { feature: "White-Label Options", starter: false, legacy: false, sanctuary: true },
+                    { feature: "Dedicated Family Advisor", starter: false, legacy: false, sanctuary: true },
+                    { feature: "Annual Family Retreat", starter: false, legacy: false, sanctuary: true },
+                    { feature: "Early Access Features", starter: false, legacy: false, sanctuary: true },
+                  ].map((row, index) => (
+                    <TableRow key={row.feature} className={`border-border/50 ${index % 2 === 0 ? 'bg-background/50' : ''}`}>
+                      <TableCell className="font-medium">{row.feature}</TableCell>
+                      <TableCell className="text-center">
+                        {typeof row.starter === 'boolean' ? (
+                          row.starter ? (
+                            <Check className="w-5 h-5 text-secondary mx-auto" />
+                          ) : (
+                            <X className="w-5 h-5 text-muted-foreground/40 mx-auto" />
+                          )
+                        ) : (
+                          <span className="text-muted-foreground">{row.starter}</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center bg-secondary/5">
+                        {typeof row.legacy === 'boolean' ? (
+                          row.legacy ? (
+                            <Check className="w-5 h-5 text-secondary mx-auto" />
+                          ) : (
+                            <X className="w-5 h-5 text-muted-foreground/40 mx-auto" />
+                          )
+                        ) : (
+                          <span className="text-secondary font-medium">{row.legacy}</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {typeof row.sanctuary === 'boolean' ? (
+                          row.sanctuary ? (
+                            <Check className="w-5 h-5 text-secondary mx-auto" />
+                          ) : (
+                            <X className="w-5 h-5 text-muted-foreground/40 mx-auto" />
+                          )
+                        ) : (
+                          <span className="text-foreground font-medium">{row.sanctuary}</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
 
           {/* Trust Section */}
