@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Compass, ArrowLeft, Loader2 } from "lucide-react";
+import { Check, X, Compass, ArrowLeft, Loader2, Quote } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -303,6 +304,56 @@ const Pricing = () => {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+          </div>
+
+          {/* Testimonials Section */}
+          <div className="space-y-8">
+            <div className="text-center space-y-2">
+              <h3 className="text-2xl font-bold">What Families Are Saying</h3>
+              <p className="text-muted-foreground">Join thousands of families transforming their legacy</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  quote: "Atlas Sanctum transformed how our family communicates about money and values. The Mirror Room sessions have brought us closer than ever.",
+                  name: "Sarah Chen",
+                  role: "Mother of 3, Legacy Builder",
+                  initials: "SC",
+                },
+                {
+                  quote: "Finally, a platform that understands family wealth is about more than just numbers. The Legacy Engine helps us preserve stories that would have been lost.",
+                  name: "Marcus Williams",
+                  role: "Grandfather, Sanctum Circle",
+                  initials: "MW",
+                },
+                {
+                  quote: "We started with the free tier and upgraded within a week. The AI insights in the Family Atlas helped us identify patterns we never noticed.",
+                  name: "Elena Rodriguez",
+                  role: "Family Coach, Legacy Builder",
+                  initials: "ER",
+                },
+              ].map((testimonial) => (
+                <Card key={testimonial.name} className="border-border/50 bg-card/50 backdrop-blur-sm">
+                  <CardContent className="pt-6 space-y-4">
+                    <Quote className="w-8 h-8 text-secondary/30" />
+                    <p className="text-muted-foreground italic leading-relaxed">
+                      "{testimonial.quote}"
+                    </p>
+                    <div className="flex items-center gap-3 pt-2">
+                      <Avatar className="h-10 w-10 border-2 border-secondary/20">
+                        <AvatarFallback className="bg-secondary/10 text-secondary font-medium">
+                          {testimonial.initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold text-sm">{testimonial.name}</p>
+                        <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
 
