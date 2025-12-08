@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Compass, ArrowLeft, Loader2, Quote } from "lucide-react";
+import { Check, X, Compass, ArrowLeft, Loader2, Quote, Shield, Award, Heart } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -357,12 +357,53 @@ const Pricing = () => {
             </div>
           </div>
 
+          {/* Guarantee Badge Section */}
+          <div className="flex flex-col items-center space-y-6 pt-8">
+            <div className="relative">
+              {/* Main Badge */}
+              <div className="w-40 h-40 rounded-full bg-gradient-to-br from-secondary via-secondary/90 to-primary flex items-center justify-center shadow-glow">
+                <div className="w-36 h-36 rounded-full bg-background border-4 border-secondary/30 flex flex-col items-center justify-center text-center p-4">
+                  <Shield className="w-8 h-8 text-secondary mb-1" />
+                  <span className="text-2xl font-bold text-secondary">30-Day</span>
+                  <span className="text-xs text-muted-foreground font-medium">MONEY-BACK</span>
+                  <span className="text-sm font-semibold">GUARANTEE</span>
+                </div>
+              </div>
+              {/* Decorative ribbon effect */}
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-secondary text-secondary-foreground text-xs font-bold px-4 py-1 rounded-full shadow-md">
+                100% RISK FREE
+              </div>
+            </div>
+            
+            <p className="text-center text-muted-foreground max-w-md text-sm">
+              Try Atlas Sanctum risk-free. If you&apos;re not completely satisfied within 30 days, 
+              we&apos;ll refund your payment—no questions asked.
+            </p>
+          </div>
+
           {/* Trust Section */}
-          <div className="text-center pt-8 space-y-4">
+          <div className="text-center pt-8 space-y-6">
             <p className="text-sm text-muted-foreground">
               Join 1M+ families building conscious prosperity together
             </p>
-            <div className="flex items-center justify-center gap-8 flex-wrap">
+            
+            {/* Trust Badges */}
+            <div className="flex items-center justify-center gap-6 flex-wrap">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border/50">
+                <Shield className="w-5 h-5 text-secondary" />
+                <span className="text-sm font-medium">Secure & Encrypted</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border/50">
+                <Award className="w-5 h-5 text-secondary" />
+                <span className="text-sm font-medium">Award Winning</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border/50">
+                <Heart className="w-5 h-5 text-secondary" />
+                <span className="text-sm font-medium">Family Approved</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-8 flex-wrap pt-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-secondary">30-day</div>
                 <div className="text-sm text-muted-foreground">Money-back guarantee</div>
