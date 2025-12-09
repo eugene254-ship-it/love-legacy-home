@@ -161,14 +161,15 @@ const Pricing = () => {
 
           {/* Pricing Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {plans.map((plan) => (
+            {plans.map((plan, index) => (
               <Card
                 key={plan.name}
                 className={`relative border-border/50 ${
                   plan.popular
                     ? "shadow-sanctuary scale-105 border-secondary"
                     : "shadow-sm"
-                } transition-all hover:shadow-glow`}
+                } transition-all hover:shadow-glow opacity-0 animate-fade-in`}
+                style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -333,8 +334,12 @@ const Pricing = () => {
                   role: "Family Coach, Legacy Builder",
                   initials: "ER",
                 },
-              ].map((testimonial) => (
-                <Card key={testimonial.name} className="border-border/50 bg-card/50 backdrop-blur-sm">
+              ].map((testimonial, index) => (
+                <Card 
+                  key={testimonial.name} 
+                  className="border-border/50 bg-card/50 backdrop-blur-sm opacity-0 animate-fade-in"
+                  style={{ animationDelay: `${600 + index * 150}ms`, animationFillMode: 'forwards' }}
+                >
                   <CardContent className="pt-6 space-y-4">
                     <Quote className="w-8 h-8 text-secondary/30" />
                     <p className="text-muted-foreground italic leading-relaxed">
@@ -358,10 +363,10 @@ const Pricing = () => {
           </div>
 
           {/* Guarantee Badge Section */}
-          <div className="flex flex-col items-center space-y-6 pt-8">
+          <div className="flex flex-col items-center space-y-6 pt-8 opacity-0 animate-scale-in" style={{ animationDelay: '900ms', animationFillMode: 'forwards' }}>
             <div className="relative">
               {/* Main Badge */}
-              <div className="w-40 h-40 rounded-full bg-gradient-to-br from-secondary via-secondary/90 to-primary flex items-center justify-center shadow-glow">
+              <div className="w-40 h-40 rounded-full bg-gradient-to-br from-secondary via-secondary/90 to-primary flex items-center justify-center shadow-glow animate-pulse">
                 <div className="w-36 h-36 rounded-full bg-background border-4 border-secondary/30 flex flex-col items-center justify-center text-center p-4">
                   <Shield className="w-8 h-8 text-secondary mb-1" />
                   <span className="text-2xl font-bold text-secondary">30-Day</span>
@@ -389,18 +394,20 @@ const Pricing = () => {
             
             {/* Trust Badges */}
             <div className="flex items-center justify-center gap-6 flex-wrap">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border/50">
-                <Shield className="w-5 h-5 text-secondary" />
-                <span className="text-sm font-medium">Secure & Encrypted</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border/50">
-                <Award className="w-5 h-5 text-secondary" />
-                <span className="text-sm font-medium">Award Winning</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border/50">
-                <Heart className="w-5 h-5 text-secondary" />
-                <span className="text-sm font-medium">Family Approved</span>
-              </div>
+              {[
+                { icon: Shield, label: "Secure & Encrypted" },
+                { icon: Award, label: "Award Winning" },
+                { icon: Heart, label: "Family Approved" },
+              ].map((badge, index) => (
+                <div 
+                  key={badge.label}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border/50 opacity-0 animate-fade-in hover:scale-105 transition-transform"
+                  style={{ animationDelay: `${1100 + index * 100}ms`, animationFillMode: 'forwards' }}
+                >
+                  <badge.icon className="w-5 h-5 text-secondary" />
+                  <span className="text-sm font-medium">{badge.label}</span>
+                </div>
+              ))}
             </div>
 
             <div className="flex items-center justify-center gap-8 flex-wrap pt-4">
