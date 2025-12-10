@@ -33,6 +33,7 @@ const Pricing = () => {
   const navigate = useNavigate();
   const { session, subscriptionStatus } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
 
   useEffect(() => {
     document.title = "Pricing - Atlas Sanctum";
@@ -69,7 +70,8 @@ const Pricing = () => {
   const plans = [
     {
       name: "Sanctuary Starter",
-      price: "Free",
+      monthlyPrice: "Free",
+      annualPrice: "Free",
       description: "Perfect for families beginning their journey",
       features: [
         "Up to 4 family members",
@@ -84,8 +86,8 @@ const Pricing = () => {
     },
     {
       name: "Legacy Builder",
-      price: "$29",
-      period: "/month",
+      monthlyPrice: 29,
+      annualPrice: 290, // ~17% savings ($348 -> $290)
       description: "For families committed to conscious prosperity",
       features: [
         "Unlimited family members",
@@ -104,8 +106,8 @@ const Pricing = () => {
     },
     {
       name: "Sanctum Circle",
-      price: "$99",
-      period: "/month",
+      monthlyPrice: 99,
+      annualPrice: 990, // ~17% savings ($1188 -> $990)
       description: "For multi-generational family networks",
       features: [
         "Everything in Legacy Builder",
@@ -123,6 +125,18 @@ const Pricing = () => {
       productId: STRIPE_TIERS.sanctuary.product_id,
     },
   ];
+
+  const getPrice = (plan: typeof plans[0]) => {
+    if (plan.monthlyPrice === "Free") return "Free";
+    return billingPeriod === 'monthly' ? plan.monthlyPrice : plan.annualPrice;
+  };
+
+  const getSavings = (plan: typeof plans[0]) => {
+    if (typeof plan.monthlyPrice !== 'number') return 0;
+    const yearlyFullPrice = plan.monthlyPrice * 12;
+    const annualPrice = plan.annualPrice as number;
+    return yearlyFullPrice - annualPrice;
+  };
 
   const isCurrentPlan = (productId?: string) => {
     return productId && subscriptionStatus.product_id === productId;
@@ -157,6 +171,33 @@ const Pricing = () => {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Every family's journey is unique. Select the plan that aligns with your vision for conscious prosperity.
             </p>
+            
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center gap-4 pt-4">
+              <button
+                onClick={() => setBillingPeriod('monthly')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  billingPeriod === 'monthly'
+                    ? 'bg-secondary text-secondary-foreground shadow-md'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBillingPeriod('annual')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                  billingPeriod === 'annual'
+                    ? 'bg-secondary text-secondary-foreground shadow-md'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Annual
+                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">
+                  Save 17%
+                </Badge>
+              </button>
+            </div>
           </div>
 
           {/* Pricing Cards */}
@@ -186,13 +227,18 @@ const Pricing = () => {
                   </CardDescription>
                   <div className="space-y-1">
                     <div className="text-4xl font-bold">
-                      {plan.price}
-                      {plan.period && (
+                      {getPrice(plan) === "Free" ? "Free" : `$${getPrice(plan)}`}
+                      {getPrice(plan) !== "Free" && (
                         <span className="text-lg text-muted-foreground">
-                          {plan.period}
+                          /{billingPeriod === 'monthly' ? 'month' : 'year'}
                         </span>
                       )}
                     </div>
+                    {billingPeriod === 'annual' && getSavings(plan) > 0 && (
+                      <div className="text-sm text-green-600 font-medium animate-fade-in">
+                        Save ${getSavings(plan)} per year
+                      </div>
+                    )}
                   </div>
                 </CardHeader>
 
