@@ -9,8 +9,7 @@ import Pricing from "./pages/Pricing";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-
-
+import SupportWidget from "./components/SupportWidget";
 
 const App = () => (
   <TooltipProvider>
@@ -27,6 +26,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <SupportWidget />
       </AuthProvider>
     </BrowserRouter>
   </TooltipProvider>
