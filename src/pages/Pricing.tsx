@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Compass, ArrowLeft, Loader2, Quote, Shield, Award, Heart } from "lucide-react";
+import { Check, X, Compass, ArrowLeft, Loader2, Quote, Shield, Award, Heart, HelpCircle } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -408,8 +414,72 @@ const Pricing = () => {
             </div>
           </div>
 
+          {/* FAQ Section */}
+          <div className="space-y-8">
+            <div className="text-center space-y-2">
+              <div className="flex items-center justify-center gap-2">
+                <HelpCircle className="w-6 h-6 text-secondary" />
+                <h3 className="text-2xl font-bold">Frequently Asked Questions</h3>
+              </div>
+              <p className="text-muted-foreground">Everything you need to know about our plans</p>
+            </div>
+            
+            <div className="max-w-3xl mx-auto">
+              <Accordion type="single" collapsible className="space-y-4">
+                {[
+                  {
+                    question: "Can I switch between plans at any time?",
+                    answer: "Yes! You can upgrade or downgrade your plan at any time. When upgrading, you'll be charged the prorated difference. When downgrading, the change takes effect at the end of your current billing cycle."
+                  },
+                  {
+                    question: "How does the 30-day money-back guarantee work?",
+                    answer: "If you're not completely satisfied within 30 days of your purchase, contact our support team and we'll issue a full refund—no questions asked. This applies to all paid plans."
+                  },
+                  {
+                    question: "What payment methods do you accept?",
+                    answer: "We accept all major credit cards (Visa, MasterCard, American Express, Discover) as well as PayPal. All payments are processed securely through Stripe."
+                  },
+                  {
+                    question: "Can I add more family members to my plan?",
+                    answer: "The Sanctuary Starter plan supports up to 4 family members. For unlimited family members, upgrade to Legacy Builder or Sanctum Circle plans."
+                  },
+                  {
+                    question: "Is my family's data secure and private?",
+                    answer: "Absolutely. We use bank-level encryption (AES-256) to protect your data. Your family's information is never shared with third parties, and you maintain full ownership of all content you create."
+                  },
+                  {
+                    question: "What happens to my data if I cancel?",
+                    answer: "You'll have 30 days after cancellation to export all your data. We provide easy export tools for all your family's content, stories, and financial data."
+                  },
+                  {
+                    question: "Do you offer discounts for annual billing?",
+                    answer: "Yes! When you choose annual billing, you save approximately 17% compared to monthly billing. That's like getting 2 months free every year."
+                  },
+                  {
+                    question: "What's included in the Mirror Room AI guidance?",
+                    answer: "Mirror Room provides AI-powered family coaching sessions, emotional intelligence insights, guided reflections, and personalized recommendations for improving family harmony and communication."
+                  },
+                ].map((faq, index) => (
+                  <AccordionItem 
+                    key={index} 
+                    value={`item-${index}`}
+                    className="border border-border/50 rounded-lg px-6 bg-card/50 backdrop-blur-sm opacity-0 animate-fade-in"
+                    style={{ animationDelay: `${1000 + index * 100}ms`, animationFillMode: 'forwards' }}
+                  >
+                    <AccordionTrigger className="text-left font-medium hover:no-underline py-4">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground pb-4">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </div>
+
           {/* Guarantee Badge Section */}
-          <div className="flex flex-col items-center space-y-6 pt-8 opacity-0 animate-scale-in" style={{ animationDelay: '900ms', animationFillMode: 'forwards' }}>
+          <div className="flex flex-col items-center space-y-6 pt-8 opacity-0 animate-scale-in" style={{ animationDelay: '1800ms', animationFillMode: 'forwards' }}>
             <div className="relative">
               {/* Main Badge */}
               <div className="w-40 h-40 rounded-full bg-gradient-to-br from-secondary via-secondary/90 to-primary flex items-center justify-center shadow-glow animate-pulse">
